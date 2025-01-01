@@ -3,17 +3,18 @@ jobs:
   build:
     working_directory: /dockerapp
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: docker:20.10
     steps:
       - checkout
       - setup_remote_docker
       - run:
-          name: Install dependencies
+          name: Install Docker Compose v2
           command: |
-            apk add --no-cache py-pip=9.0.0-r1
-            pip install docker-compose==1.15.0
+            curl -SL https://github.com/docker/compose/releases/download/v2.30.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+            docker compose version
       - run:
           name: Run tests
           command: |
-            docker-compose up -d
-            docker-compose run dockerapp python test.py
+            docker compose up -d
+            docker compose run dockerapp python test.py
